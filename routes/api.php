@@ -18,6 +18,22 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::get('/test', function(){
-    dd("ddd");
+Route::group(['middleware' => ['apiJwt']], function(){
+    Route::get('users', [UserController::class, 'index']);
+    Route::post('logout', [AuthController::class,'logout']);
+    Route::post('refresh', [AuthController::class,'refresh']);
+    Route::post('me', [AuthController::class, 'me']);
 });
+
+/** Group products v1 */
+Route::prefix('posts')->group(function (){
+    Route::get('/', [PostController::class, 'index']);
+    Route::get('/show/{id}', [PostController::class, 'show']);
+    Route::post('/store', [PostController::class, 'store']);
+    Route::put('/update/{id}', [PostController::class, 'update']);
+    Route::delete('/destroy/{id}', [PostController::class, 'destroy']);
+});
+
+Route::post('/users/store', [UserController::class, 'store']);
+
+Route::post('auth/login', [AuthController::class, 'login']);
