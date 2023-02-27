@@ -39,4 +39,6 @@ Route::prefix('posts')->group(function (){
     Route::delete('/destroy/{id}', [PostController::class, 'destroy']);
 });
 
+Route::post('/users/store', [UserController::class, 'store']);
+
 Route::post('auth/login', [AuthController::class, 'login']);

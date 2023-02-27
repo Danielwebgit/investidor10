@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\PostFormRequest;
+use App\Http\Resources\PostResource;
+use App\Repositories\PostRepository;
 
 class PostController extends Controller
 {
@@ -12,20 +14,20 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(PostRepository $postRepository)
     {
-        //
+        return PostResource::collection($postRepository->getAllPosts());
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  PostFormRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostFormRequest $request, PostRepository $postRepository)
     {
-        //
+        return new PostResource($postRepository->createPost($request->all()));
     }
 
     /**
@@ -34,9 +36,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($postId, PostRepository $postRepository)
     {
-        //
+        return new PostResource($postRepository->getPostById($postId));
     }
 
     /**
@@ -46,9 +48,14 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($postId, PostFormRequest $request, PostRepository $postRepository)
     {
-        //
+        $updatePost = $postRepository->updatePost($postId, $request->all());
+        if($updatePost){
+
+            return Response()->json(['response' => 'Poste atualizado com sucesso!']);
+        } 
+        return Response()->json(['response' => 'Problema ao atualizar'], 405);
     }
 
     /**
@@ -57,8 +64,13 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($postId, PostRepository $postRepository)
     {
-        //
+        $postDelete = $postRepository->deletePost($postId);
+        if($postDelete){
+
+            return Response()->json(['response' => 'Poste deletado com sucesso!']);
+        } 
+        return Response()->json(['response' => 'Problema ao deletar'], 405);
     }
 }
