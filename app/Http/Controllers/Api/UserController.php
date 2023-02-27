@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserFormRequest;
+use App\Http\Resources\UserResource;
+use App\Services\User\UserService;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -14,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        dd("dddd");
+        return 'Olá Investidor 10';
     }
 
     /**
@@ -23,9 +26,9 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserFormRequest $request, UserService $userService)
     {
-        //
+        return new UserResource($userService->store($request->all()));
     }
 
     /**
